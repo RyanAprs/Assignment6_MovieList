@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Header from "./components/Header";
 import Movie from "./components/Movie";
 import SearchComponent from "./components/Search";
@@ -6,8 +7,9 @@ import SearchComponent from "./components/Search";
 const VITE_OMDB_API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
 const App = () => {
-  const [movies, setMovies] = useState([]);
   const [query, setQuery] = useState("");
+  const movies = useSelector((state) => state.movies);
+  const dispatch = useDispatch();
 
   const fetchMovies = async (query) => {
     try {
@@ -19,9 +21,9 @@ const App = () => {
       const data = await response.json();
 
       if (data.Search) {
-        setMovies(data.Search);
+        dispatch({ type: "INSERT_MOVIE", payload: data.Search });
       } else {
-        setMovies([]);
+        dispatch({ type: "INSERT_MOVIE", payload: [] });
       }
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -38,7 +40,7 @@ const App = () => {
 
   return (
     <div className="bg-mainColor text-secondColor min-h-screen max-h-fit">
-      <div className="flex flex-col sm:flex-row justify-between items-center py-6 px-10  shadow-xl gap-4 sm:gap-0">
+      <div className="flex flex-col sm:flex-row justify-between items-center py-6 px-10 shadow-xl gap-4 sm:gap-0">
         <Header title="MovieApp" />
         <SearchComponent onSearch={handleSearch} />
       </div>
