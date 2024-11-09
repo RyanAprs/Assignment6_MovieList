@@ -10,9 +10,11 @@ const App = () => {
   const [query, setQuery] = useState("");
   const movies = useSelector((state) => state.movies);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const fetchMovies = async (query) => {
     try {
+      setLoading(true);
       const url = query
         ? `https://www.omdbapi.com/?s=${query}&apikey=${VITE_OMDB_API_KEY}`
         : `http://www.omdbapi.com/?s=movie&apikey=${VITE_OMDB_API_KEY}`;
@@ -21,8 +23,10 @@ const App = () => {
       const data = await response.json();
 
       if (data.Search) {
+        setLoading(false);
         dispatch({ type: "INSERT_MOVIE", payload: data.Search });
       } else {
+        setLoading(false);
         dispatch({ type: "INSERT_MOVIE", payload: [] });
       }
     } catch (error) {
@@ -37,6 +41,14 @@ const App = () => {
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
   };
+
+  if (loading) {
+    return (
+      <div className="bg-mainColor text-secondColor min-h-screen max-h-fit flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="bg-mainColor text-secondColor min-h-screen max-h-fit">
