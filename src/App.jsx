@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Header from "./components/Header";
 import Movie from "./components/Movie";
 import SearchComponent from "./components/Search";
+import axios from "axios";
 
 const VITE_OMDB_API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
@@ -19,12 +20,11 @@ const App = () => {
         ? `https://www.omdbapi.com/?s=${query}&apikey=${VITE_OMDB_API_KEY}`
         : `http://www.omdbapi.com/?s=movie&apikey=${VITE_OMDB_API_KEY}`;
 
-      const response = await fetch(url);
-      const data = await response.json();
+      const response = await axios.get(url);
 
-      if (data.Search) {
+      if (response.data.Search) {
         setLoading(false);
-        dispatch({ type: "INSERT_MOVIE", payload: data.Search });
+        dispatch({ type: "INSERT_MOVIE", payload: response.data.Search });
       } else {
         setLoading(false);
         dispatch({ type: "INSERT_MOVIE", payload: [] });
